@@ -1,0 +1,62 @@
+import SwiftUI
+import MultiSyncCore
+
+struct TimelineView: View {
+    let groups: [SyncGroup]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Timeline")
+                .font(.headline)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .top, spacing: 16) {
+                    ForEach(groups) { group in
+                        TimelineGroupCard(group: group)
+                    }
+                }
+                .padding(.vertical, 6)
+            }
+        }
+    }
+}
+
+struct TimelineGroupCard: View {
+    let group: SyncGroup
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(group.name)
+                .font(.headline)
+
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.accentColor.opacity(0.15))
+                .frame(width: 220, height: 90)
+                .overlay(
+                    VStack(alignment: .leading) {
+                        Text(group.referenceMedia.name)
+                            .font(.caption)
+                        Spacer()
+                        HStack {
+                            Circle().fill(.green).frame(width: 8, height: 8)
+                            Text("Offset: \(group.offset, specifier: "%.2f")s")
+                                .font(.caption)
+                        }
+                    }
+                    .padding(10), alignment: .leading
+                )
+
+            ForEach(group.mediaFiles) { file in
+                HStack {
+                    Circle().fill(file.id == group.referenceMedia.id ? .blue : .gray).frame(width: 8, height: 8)
+                    Text(file.name)
+                        .font(.caption)
+                }
+            }
+        }
+        .padding(12)
+        .frame(width: 240)
+        .background(Color.secondary.opacity(0.04))
+        .cornerRadius(12)
+    }
+}
